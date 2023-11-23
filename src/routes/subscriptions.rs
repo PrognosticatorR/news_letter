@@ -1,3 +1,5 @@
+//! src/routes/subscriptions.rs
+
 use actix_web::{web, HttpResponse};
 use serde::Deserialize;
 
