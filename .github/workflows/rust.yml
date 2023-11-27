@@ -41,13 +41,6 @@ jobs:
         ports:
           - 5432:5432
     steps:
-        # Downloads a copy of the code in your repository before running CI tests
-      - name: Check out repository code
-        # The uses keyword specifies that this step will run v3 of the actions/checkout action. 
-        # This is an action that checks out your repository onto the runner, allowing you to run scripts or other actions against your code (such as build and test tools).
-        # You should use the checkout action any time your workflow will run against the repository's code.
-        uses: main
-
        # This GitHub Action installs a Rust toolchain using rustup. It is designed for one-line concise usage and good defaults.
       - name: Install the Rust toolchain
         uses: dtolnay/rust-toolchain@stable
