@@ -5,7 +5,7 @@ use newsLetter::configuration::get_configuration;
 use newsLetter::startup::run;
 use newsLetter::telemetry;
 use secrecy::ExposeSecret;
-use sqlx::postgres::PgPool;
+use sqlx::postgres::PgPoolOptions;
 use std::net::TcpListener;
 
 #[tokio::main]
@@ -14,14 +14,16 @@ async fn main() -> std::io::Result<()> {
     let subscriber = telemetry::get_subscriber("newsLetter".into(), "info".into(), std::io::stdout);
     telemetry::init_subscriber(subscriber);
     let configuration = get_configuration().expect("Failed to read configuration.");
-    let connection_pool =
-        PgPool::connect_lazy(configuration.database.connection_string().expose_secret())
-            .expect("Failed to connect to Postgres.");
+    let connection_pool = PgPoolOptions::new()
+        .acquire_timeout(std::time::Duration::from_secs(5))
+        .max_connections(20)
+        .connect_lazy(configuration.database.connection_string().expose_secret())
+        .expect("Failed to connect to Postgres.");
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
     );
-    println!("listening on: {}", address);
+    println!(" Server is up and running on : {}", address);
     let listener = TcpListener::bind(address)?;
     run(listener, connection_pool)?.await?;
     Ok(())

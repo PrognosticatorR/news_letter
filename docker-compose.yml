@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  newsletter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000" # Adjust the port as needed
+    environment:
+      - APP_ENVIRONMENT=production
+    depends_on:
+      - postgres
+    command: ["./newsLetter"]
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: newsletter
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
